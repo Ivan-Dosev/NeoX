@@ -49,6 +49,7 @@ function App() {
           selectedTokens={selectedTokens}
           onTokenSelect={handleTokenSelect}
           setSelectedTokens={setSelectedTokens}
+          style={{ alignSelf: 'flex-start' }}
         />
       </AppContainer>
     </Web3ReactProvider>

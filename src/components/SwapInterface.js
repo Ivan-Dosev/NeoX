@@ -10,10 +10,10 @@ import bridgeABIJson from '../abis/BridgeWithZKP.json';
 
 const SwapContainer = styled.div`
   background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
+  border-radius: 6px;
   padding: 20px;
   max-width: 400px;
-  margin: 0 auto;
+  margin: 0;
   backdrop-filter: blur(12px);
   box-shadow: 
     0 4px 24px -1px rgba(0, 0, 0, 0.2),

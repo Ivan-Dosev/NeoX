@@ -10,13 +10,15 @@ const Container = styled.div`
 
 const InputWrapper = styled.div`
   display: flex;
-  gap: 10px;
   align-items: center;
   padding-left: 0;
+  justify-content: flex-start;
+  width: 100%;
+  position: relative;
 `;
 
 const Input = styled.input`
-  flex: 1;
+  flex: 0 0 80px;
   background: transparent;
   border: none;
   color: #00f2fe;
@@ -46,9 +48,12 @@ const Input = styled.input`
 `;
 
 const DropdownContainer = styled.div`
-  position: relative;
+  position: absolute;
+  top: 0;
+  right: 0;
   min-width: 120px;
   flex-shrink: 0;
+  margin-left: 0;
 `;
 
 const DropdownButton = styled.button`
@@ -76,7 +81,7 @@ const DropdownButton = styled.button`
 const DropdownList = styled.div`
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
   margin-top: 4px;
   background: #1a1b23;
   border: 1px solid rgba(0, 242, 254, 0.2);
@@ -85,7 +90,7 @@ const DropdownList = styled.div`
   z-index: 10;
   max-height: 200px;
   overflow-y: auto;
-  width: 100%;
+  width: calc(100% - 2px);
 `;
 
 const DropdownItem = styled.div`
@@ -97,6 +102,13 @@ const DropdownItem = styled.div`
   &:hover {
     background: rgba(0, 242, 254, 0.2);
   }
+`;
+
+const TokenInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 5px;
 `;
 
 const TokenInput = ({ 
@@ -125,34 +137,36 @@ const TokenInput = ({
 
   return (
     <Container>
-      <InputWrapper>
-        <Input
-          type="number"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="0.00"
-        />
-        <DropdownContainer ref={dropdownRef}>
-          <DropdownButton onClick={() => setIsOpen(!isOpen)}>
-            {selectedToken ? selectedToken.name : 'Select Token'}
-          </DropdownButton>
-          {isOpen && (
-            <DropdownList>
-              {availableTokens.map(t => (
-                <DropdownItem
-                  key={t.symbol}
-                  onClick={() => {
-                    onTokenChange(t.symbol);
-                    setIsOpen(false);
-                  }}
-                >
-                  {t.name}
-                </DropdownItem>
-              ))}
-            </DropdownList>
-          )}
-        </DropdownContainer>
-      </InputWrapper>
+      <TokenInputContainer>
+        <InputWrapper>
+          <Input
+            type="number"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="0.00"
+          />
+          <DropdownContainer ref={dropdownRef}>
+            <DropdownButton onClick={() => setIsOpen(!isOpen)}>
+              {selectedToken ? selectedToken.name : 'Select Token'}
+            </DropdownButton>
+            {isOpen && (
+              <DropdownList>
+                {availableTokens.map(t => (
+                  <DropdownItem
+                    key={t.symbol}
+                    onClick={() => {
+                      onTokenChange(t.symbol);
+                      setIsOpen(false);
+                    }}
+                  >
+                    {t.name}
+                  </DropdownItem>
+                ))}
+              </DropdownList>
+            )}
+          </DropdownContainer>
+        </InputWrapper>
+      </TokenInputContainer>
     </Container>
   );
 };
