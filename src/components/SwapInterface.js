@@ -154,60 +154,33 @@ const SwapButton = styled.button`
   width: 100%;
   padding: 15px;
   background: ${props => {
+    if (props.error) return '#ff4444';
+    if (props.status) return '#00ffff';
     if (props.disabled) return '#3a4157';
     if (!props.connected) return 'linear-gradient(135deg, #2172E5 0%, #1C66D2 100%)';
     return 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)';
   }};
   border: none;
   border-radius: 8px;
-  color: white;
+  color: ${props => props.error ? 'white' : (props.status ? 'black' : 'white')};
   font-size: 15px;
   font-weight: 600;
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   margin-top: 20px;
   transition: all 0.2s ease;
-  box-shadow: ${props => {
-    if (props.disabled) return 'none';
-    if (!props.connected) return '0 4px 12px rgba(33, 114, 229, 0.3)';
-    return '0 4px 16px rgba(0, 242, 254, 0.3), 0 0 20px rgba(79, 172, 254, 0.2)';
-  }};
+  min-height: 52px;
+  position: relative;
+  overflow: hidden;
 
   &:hover {
     background: ${props => {
+      if (props.error) return '#ff6666';
+      if (props.status) return '#33ffff';
       if (props.disabled) return '#3a4157';
       if (!props.connected) return 'linear-gradient(135deg, #1C66D2 0%, #1859B7 100%)';
       return 'linear-gradient(135deg, #00e6f2 0%, #3a9fee 100%)';
     }};
-    box-shadow: ${props => {
-      if (props.disabled) return 'none';
-      if (!props.connected) return '0 4px 16px rgba(33, 114, 229, 0.4)';
-      return '0 4px 20px rgba(0, 242, 254, 0.4), 0 0 30px rgba(79, 172, 254, 0.3)';
-    }};
-    transform: ${props => props.disabled ? 'none' : 'translateY(-1px)'};
   }
-
-  &:active {
-    transform: translateY(0px);
-    box-shadow: ${props => {
-      if (props.disabled) return 'none';
-      if (!props.connected) return '0 4px 8px rgba(33, 114, 229, 0.2)';
-      return '0 4px 12px rgba(0, 242, 254, 0.2), 0 0 15px rgba(79, 172, 254, 0.1)';
-    }};
-  }
-`;
-
-const StatusMessage = styled.div`
-  color: rgba(0, 242, 254, 0.8);
-  text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
-`;
-
-const ErrorMessage = styled.div`
-  color: #ff6b6b;
-  text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
 `;
 
 const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
@@ -225,6 +198,9 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
   };
 
   const getButtonText = () => {
+    if (loading) return 'Processing...';
+    if (error) return error;
+    if (status) return status;
     if (!active) return 'Connect Wallet';
     if (!fromAmount) return 'Enter an amount';
     return 'Swap';
@@ -523,6 +499,18 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
     }
   };
 
+  const handleSwapButtonClick = () => {
+    if (!active) {
+      // Find the wallet connect button and simulate a click
+      const walletConnectButton = document.querySelector('[data-wallet-connect]');
+      if (walletConnectButton) {
+        walletConnectButton.click();
+      }
+      return;
+    }
+    handleSwap();
+  };
+
   return (
     <SwapContainer>
       <SwapHeader>
@@ -534,7 +522,6 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
         onChange={setFromAmount}
         token={selectedTokens.from}
         onTokenChange={(token) => handleTokenSelect(token, 'from')}
-        label="You sell"
         availableTokens={availableTokens}
       />
 
@@ -554,20 +541,18 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
         onChange={setToAmount}
         token={selectedTokens.to}
         onTokenChange={(token) => handleTokenSelect(token, 'to')}
-        label="You buy"
         availableTokens={availableTokens}
       />
 
       <SwapButton 
-        disabled={!active || !fromAmount || loading} 
+        disabled={loading} 
         connected={active}
-        onClick={handleSwap}
+        onClick={handleSwapButtonClick}
+        error={error}
+        status={status && !error}
       >
-        {loading ? 'Processing...' : getButtonText()}
+        {getButtonText()}
       </SwapButton>
-
-      {status && <StatusMessage>{status}</StatusMessage>}
-      {error && <ErrorMessage>{error}</ErrorMessage>}
     </SwapContainer>
   );
 };

@@ -27,7 +27,10 @@ const WalletConnect = () => {
   };
 
   return (
-    <ConnectButton onClick={active ? disconnect : connect}>
+    <ConnectButton 
+      onClick={active ? disconnect : connect}
+      data-wallet-connect
+    >
       {active ? `Connected: ${account.substring(0, 6)}...${account.substring(38)}` : 'Connect Wallet'}
     </ConnectButton>
   );

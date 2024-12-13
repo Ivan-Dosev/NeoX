@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -8,27 +8,35 @@ const Container = styled.div`
   margin-bottom: 15px;
 `;
 
-const Label = styled.div`
-  color: rgba(0, 242, 254, 0.8);
-  font-size: 12px;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-`;
-
 const InputWrapper = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
+  padding-left: 0;
 `;
 
 const Input = styled.input`
   flex: 1;
   background: transparent;
   border: none;
-  color: white;
-  font-size: 18px;
+  color: #00f2fe;
+  font-size: 24px;
+  font-family: 'Inter', monospace;
+  font-weight: 500;
   outline: none;
-  padding: 5px;
+  padding: 5px 0;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+  transition: all 0.2s ease;
+  text-align: left;
+
+  &::placeholder {
+    color: rgba(0, 242, 254, 0.3);
+  }
+
+  &:focus {
+    text-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+  }
 
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
@@ -37,7 +45,13 @@ const Input = styled.input`
   }
 `;
 
-const Select = styled.select`
+const DropdownContainer = styled.div`
+  position: relative;
+  min-width: 120px;
+  flex-shrink: 0;
+`;
+
+const DropdownButton = styled.button`
   background: rgba(0, 242, 254, 0.1);
   border: 1px solid rgba(0, 242, 254, 0.2);
   border-radius: 8px;
@@ -45,11 +59,43 @@ const Select = styled.select`
   padding: 8px 12px;
   outline: none;
   cursor: pointer;
-  min-width: 150px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
 
-  option {
-    background: #1a1b23;
-    color: white;
+  &:after {
+    content: '▼';
+    font-size: 10px;
+    color: #00f2fe;
+    margin-left: 8px;
+  }
+`;
+
+const DropdownList = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: #1a1b23;
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+`;
+
+const DropdownItem = styled.div`
+  padding: 10px 12px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: rgba(0, 242, 254, 0.2);
   }
 `;
 
@@ -58,12 +104,27 @@ const TokenInput = ({
   onChange, 
   token, 
   onTokenChange, 
-  label, 
   availableTokens 
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedToken = availableTokens.find(t => t.symbol === token);
+
   return (
     <Container>
-      <Label>{label}</Label>
       <InputWrapper>
         <Input
           type="number"
@@ -71,16 +132,26 @@ const TokenInput = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder="0.00"
         />
-        <Select 
-          value={token} 
-          onChange={(e) => onTokenChange(e.target.value)}
-        >
-          {availableTokens.map(t => (
-            <option key={t.symbol} value={t.symbol}>
-              {t.name}
-            </option>
-          ))}
-        </Select>
+        <DropdownContainer ref={dropdownRef}>
+          <DropdownButton onClick={() => setIsOpen(!isOpen)}>
+            {selectedToken ? selectedToken.name : 'Select Token'}
+          </DropdownButton>
+          {isOpen && (
+            <DropdownList>
+              {availableTokens.map(t => (
+                <DropdownItem
+                  key={t.symbol}
+                  onClick={() => {
+                    onTokenChange(t.symbol);
+                    setIsOpen(false);
+                  }}
+                >
+                  {t.name}
+                </DropdownItem>
+              ))}
+            </DropdownList>
+          )}
+        </DropdownContainer>
       </InputWrapper>
     </Container>
   );
