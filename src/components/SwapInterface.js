@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TokenInput from './TokenInput';
 import { useWallet } from '../hooks/useWallet';
@@ -183,6 +183,101 @@ const SwapButton = styled.button`
   }
 `;
 
+const FeeBox = styled.div`
+  background: rgba(0, 242, 254, 0.05);
+  border: 1px solid rgba(0, 242, 254, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  margin: 20px 0;
+  color: rgba(0, 242, 254, 0.8);
+  font-size: 16px;
+  font-family: 'Inter', monospace;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(0, 242, 254, 0.05);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(0, 242, 254, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 242, 254, 0.08);
+    transform: translateY(-1px);
+  }
+`;
+
+const FeeLabel = styled.span`
+  color: rgba(0, 242, 254, 0.7);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 0 8px rgba(0, 242, 254, 0.2);
+
+  &::before {
+    content: '💰';
+    font-size: 18px;
+  }
+`;
+
+const FeeAmount = styled.span`
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+`;
+
+const PromotionBox = styled.div`
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  color: rgba(0, 242, 254, 0.9);
+  font-size: 16px;
+  font-family: 'Inter', monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 242, 254, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 242, 254, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 242, 254, 0.2);
+  }
+`;
+
+const PromotionTitle = styled.h3`
+  margin: 0;
+  font-weight: 600;
+  color: #00f2fe;
+`;
+
+const PromotionText = styled.p`
+  margin: 10px 0;
+  color: rgba(0, 242, 254, 0.7);
+`;
+
+const StakeButton = styled.button`
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #4facfe 0%, #00e6f2 100%);
+  }
+`;
+
 const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -190,6 +285,28 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
+
+  // Calculate fee (1% of fromAmount)
+  const calculateFee = () => {
+    if (!fromAmount || isNaN(fromAmount)) return "0";
+    const amount = parseFloat(fromAmount);
+    return (amount * 0.01).toFixed(6); // 1% fee, showing 6 decimal places
+  };
+
+  useEffect(() => {
+    // Update toAmount to be fromAmount minus the fee
+    if (!fromAmount || isNaN(fromAmount)) {
+      setToAmount('');
+    } else {
+      const amount = parseFloat(fromAmount);
+      const fee = amount * 0.01;
+      setToAmount((amount - fee).toString());
+    }
+  }, [fromAmount]);
+
+  const handleFromAmountChange = (value) => {
+    setFromAmount(value);
+  };
 
   const handleTokenSelect = (token, type) => {
     if (onTokenSelect) {
@@ -519,7 +636,7 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
 
       <TokenInput
         value={fromAmount}
-        onChange={setFromAmount}
+        onChange={handleFromAmountChange}
         token={selectedTokens.from}
         onTokenChange={(token) => handleTokenSelect(token, 'from')}
         availableTokens={availableTokens}
@@ -542,7 +659,18 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
         token={selectedTokens.to}
         onTokenChange={(token) => handleTokenSelect(token, 'to')}
         availableTokens={availableTokens}
+        disabled={true}
       />
+
+      {/* Add Fee Display Box */}
+      {fromAmount && !isNaN(fromAmount) && parseFloat(fromAmount) > 0 && (
+        <FeeBox>
+          <FeeLabel>Bridge Fee (1%)</FeeLabel>
+          <FeeAmount>
+            {calculateFee()} {selectedTokens.from}
+          </FeeAmount>
+        </FeeBox>
+      )}
 
       <SwapButton 
         disabled={loading} 
@@ -553,6 +681,17 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
       >
         {getButtonText()}
       </SwapButton>
+
+      {/* Staking Promotion Box */}
+      <PromotionBox>
+        <PromotionTitle>Stake and Earn!</PromotionTitle>
+        <PromotionText>
+          Join our staking program and earn up to 12% APY on your tokens!
+        </PromotionText>
+        <StakeButton onClick={() => alert('comming soon!')}>
+          Stake Now!
+        </StakeButton>
+      </PromotionBox>
     </SwapContainer>
   );
 };

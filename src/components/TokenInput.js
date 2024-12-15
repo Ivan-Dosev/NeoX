@@ -45,6 +45,12 @@ const Input = styled.input`
     -webkit-appearance: none;
     margin: 0;
   }
+
+  &:disabled {
+    background: transparent;
+    color: rgba(0, 242, 254, 0.7);
+    opacity: 0.7;
+  }
 `;
 
 const DropdownContainer = styled.div`
@@ -116,7 +122,8 @@ const TokenInput = ({
   onChange, 
   token, 
   onTokenChange, 
-  availableTokens 
+  availableTokens,
+  disabled = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -144,6 +151,7 @@ const TokenInput = ({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="0.00"
+            disabled={disabled}
           />
           <DropdownContainer ref={dropdownRef}>
             <DropdownButton onClick={() => setIsOpen(!isOpen)}>
