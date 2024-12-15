@@ -17,8 +17,8 @@ async function testBridge() {
 
     // Test parameters
     const amount = ethers.utils.parseEther("1.0");
-    const tokenIn = "SEPOLIA_TOKEN_ADDRESS";
-    const tokenOut = "MUMBAI_TOKEN_ADDRESS";
+    const tokenIn = "NEOX_TOKEN_ADDRESS";
+    const tokenOut = "SEPOLIA_TOKEN_ADDRESS";
 
     // Generate proof
     const { commitment, nullifierHash, proof } = await generateZKProof(
@@ -28,13 +28,17 @@ async function testBridge() {
         wallet.address
     );
 
-    // Deposit on Sepolia
-    const depositTx = await sepoliaBridge.deposit(tokenIn, amount, commitment);
-    await depositTx.wait();
-    console.log("Deposit successful on Sepolia");
+    console.log("Commitment:", commitment);
+    console.log("Nullifier Hash:", nullifierHash);
+    console.log("Proof:", proof);
 
-    // Withdraw on Mumbai
-    const withdrawTx = await mumbaiBridge.withdraw(
+    // Deposit on NeoX
+    const depositTx = await neoxBridge.deposit(tokenIn, amount, commitment);
+    await depositTx.wait();
+    console.log("Deposit successful on NeoX");
+
+    // Withdraw on Sepolia or Base Sepolia
+    const withdrawTx = await sepoliaBridge.withdraw(
         tokenOut,
         amount,
         wallet.address,
@@ -42,7 +46,7 @@ async function testBridge() {
         proof
     );
     await withdrawTx.wait();
-    console.log("Withdrawal successful on Mumbai");
+    console.log("Withdrawal successful on Sepolia");
 }
 
 testBridge().catch(console.error); 

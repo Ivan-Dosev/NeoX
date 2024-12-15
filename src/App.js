@@ -20,6 +20,13 @@ export const tokens = [
     network: 'base-sepolia',
     chainId: '0x14a34',
     bridgeAddress: process.env.REACT_APP_BASE_SEPOLIA_BRIDGE_ADDRESS
+  },
+  { 
+    symbol: 'GAS',
+    name: 'NeoX Mainnet',
+    network: 'neox-mainnet',
+    chainId: '0xba93',
+    bridgeAddress: process.env.REACT_APP_NEOX_MAINNET_BRIDGE_ADDRESS
   }
 ];
 

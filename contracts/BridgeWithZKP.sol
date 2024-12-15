@@ -17,9 +17,6 @@ contract BridgeWithZKP is ReentrancyGuard, Ownable {
     mapping(bytes32 => bool) public nullifierHashes;
     // Verifier contract address
     address public verifier;
-    // Two-step withdrawal process
-    mapping(bytes32 => uint256) public withdrawalCommitments;
-    uint256 public constant WITHDRAWAL_DELAY = 10; // blocks
     
     event DepositCreated(
         uint256 amount,
@@ -27,8 +24,11 @@ contract BridgeWithZKP is ReentrancyGuard, Ownable {
         uint256 timestamp
     );
 
-    event WithdrawalCommitted(bytes32 indexed commitmentHash);
-    event WithdrawalExecuted(address indexed recipient, uint256 amount);
+    event WithdrawalExecuted(
+        address indexed recipient,
+        uint256 amount,
+        bytes32 indexed nullifierHash
+    );
 
     constructor(address _verifier) {
         verifier = _verifier;
@@ -49,43 +49,6 @@ contract BridgeWithZKP is ReentrancyGuard, Ownable {
         emit DepositCreated(msg.value, commitment, block.timestamp);
     }
 
-    // Function to commit to withdrawal
-    function commitWithdrawal(bytes32 commitmentHash) external {
-        require(withdrawalCommitments[commitmentHash] == 0, "Commitment exists");
-        withdrawalCommitments[commitmentHash] = block.number;
-        emit WithdrawalCommitted(commitmentHash);
-    }
-
-    // Function to verify ZKP proof
-    function verifyProof(
-        bytes calldata proof,
-        bytes32 nullifierHash,
-        address recipient
-    ) internal view returns (bool) {
-        // Decode proof components
-        (uint256 amount, address proofRecipient, bytes32 secret) = abi.decode(
-            proof,
-            (uint256, address, bytes32)
-        );
-
-        // Verify recipient matches
-        require(recipient == proofRecipient, "Invalid recipient");
-
-        // Verify commitment matches
-        bytes32 commitment = keccak256(
-            abi.encode(secret, amount, recipient)
-        );
-        require(deposits[commitment].amount > 0, "Invalid commitment");
-
-        // Verify nullifier matches
-        bytes32 expectedNullifier = keccak256(
-            abi.encode(secret, recipient)
-        );
-        require(nullifierHash == expectedNullifier, "Invalid nullifier");
-
-        return true;
-    }
-
     // Function to withdraw with ZKP proof
     function withdraw(
         uint256 amount,
@@ -96,8 +59,8 @@ contract BridgeWithZKP is ReentrancyGuard, Ownable {
         require(!nullifierHashes[nullifierHash], "Nullifier already used");
         require(address(this).balance >= amount, "Insufficient liquidity");
 
-        // Verify the proof includes correct recipient
-        require(verifyProof(proof, nullifierHash, recipient), "Invalid proof");
+        // Verify the ZKP proof
+        require(verifyProof(proof, nullifierHash), "Invalid proof");
 
         // Mark nullifier as used
         nullifierHashes[nullifierHash] = true;
@@ -106,7 +69,24 @@ contract BridgeWithZKP is ReentrancyGuard, Ownable {
         (bool success, ) = recipient.call{value: amount}("");
         require(success, "Transfer failed");
 
-        emit WithdrawalExecuted(recipient, amount);
+        emit WithdrawalExecuted(recipient, amount, nullifierHash);
+    }
+
+    // Function to verify ZKP proof
+    function verifyProof(
+        bytes calldata proof,
+        bytes32 nullifierHash
+    ) internal view returns (bool) {
+        // Call the verifier contract
+        (bool success, bytes memory result) = verifier.staticcall(
+            abi.encodeWithSignature(
+                "verifyProof(bytes,bytes32)",
+                proof,
+                nullifierHash
+            )
+        );
+        require(success, "Verifier call failed");
+        return abi.decode(result, (bool));
     }
 
     // Function to get contract balance
@@ -123,4 +103,4 @@ contract BridgeWithZKP is ReentrancyGuard, Ownable {
     // To receive native tokens
     receive() external payable {}
     fallback() external payable {}
-} 
+}

@@ -1,37 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import styled from 'styled-components';
 
 const injected = new InjectedConnector({
-  supportedChainIds: [11155111, 84532] // Sepolia and Base Sepolia chain IDs
+  supportedChainIds: [11155111, 84532, 47763] // Include NeoX chain ID
 });
 
 const WalletConnect = () => {
   const { active, account, activate, deactivate } = useWeb3React();
+  const [accountState, setAccountState] = useState(null);
 
-  const connect = async () => {
-    try {
-      await activate(injected);
-    } catch (error) {
-      console.error('Error connecting wallet:', error);
+  const connectWallet = async () => {
+    if (window.ethereum) {
+      try {
+        // Request account access
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        
+        // Get accounts using eth_accounts
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        setAccountState(accounts[0]); // Set the first account
+        activate(injected); // Activate the injected connector
+      } catch (error) {
+        console.error("Error connecting to wallet:", error);
+      }
+    } else {
+      console.error("MetaMask is not installed");
     }
   };
 
-  const disconnect = () => {
-    try {
-      deactivate();
-    } catch (error) {
-      console.error('Error disconnecting wallet:', error);
-    }
-  };
+  useEffect(() => {
+    // Check if already connected
+    const checkConnection = async () => {
+      if (window.ethereum) {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length > 0) {
+          setAccountState(accounts[0]);
+          activate(injected); // Activate if already connected
+        }
+      }
+    };
+    checkConnection();
+  }, [activate]);
 
   return (
     <ConnectButton 
-      onClick={active ? disconnect : connect}
+      onClick={active ? deactivate : connectWallet}
       data-wallet-connect
     >
-      {active ? `Connected: ${account.substring(0, 6)}...${account.substring(38)}` : 'Connect Wallet'}
+      {active ? `Connected: ${accountState.substring(0, 6)}...${accountState.substring(accountState.length - 4)}` : 'Connect Wallet'}
     </ConnectButton>
   );
 };

@@ -1,9 +1,9 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/dimitrov/Desktop/hackathon/contracts/BridgeWithZKP.sol": {
-      "lastModificationDate": 1734079331233,
-      "contentHash": "69e95e3cfc76f63469cd6e4cf96cb919",
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/contracts/BridgeWithZKP.sol": {
+      "lastModificationDate": 1734269471651,
+      "contentHash": "7ed867e6171071b1d98d4bd6406d21f1",
       "sourceName": "contracts/BridgeWithZKP.sol",
       "solcConfig": {
         "version": "0.8.19",
@@ -30,8 +30,7 @@
       },
       "imports": [
         "@openzeppelin/contracts/security/ReentrancyGuard.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "./IVerifier.sol"
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -40,8 +39,8 @@
         "BridgeWithZKP"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1734012635682,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1734261049136,
       "contentHash": "5a20b2cad87ddb61c7a3a6af21289e28",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -77,8 +76,8 @@
         "Ownable"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
-      "lastModificationDate": 1734012635683,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
+      "lastModificationDate": 1734261049185,
       "contentHash": "1535f8c0c68463f8c1b5239f7584e71f",
       "sourceName": "@openzeppelin/contracts/security/ReentrancyGuard.sol",
       "solcConfig": {
@@ -112,8 +111,8 @@
         "ReentrancyGuard"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1734012635663,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/node_modules/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1734261048310,
       "contentHash": "f07feb4a44b1a4872370da5aa70e8e46",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -147,8 +146,8 @@
         "Context"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/contracts/TokenSwap.sol": {
-      "lastModificationDate": 1733934543960,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/contracts/TokenSwap.sol": {
+      "lastModificationDate": 1734096997483,
       "contentHash": "484704530d85b8fffc9285a8dba32808",
       "sourceName": "contracts/TokenSwap.sol",
       "solcConfig": {
@@ -186,8 +185,8 @@
         "TokenSwap"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1734012635677,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1734261048942,
       "contentHash": "df36f7051335cd1e748b1b6463b7fdd3",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -221,8 +220,8 @@
         "IERC20"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1734012635677,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+      "lastModificationDate": 1734261048948,
       "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -258,8 +257,8 @@
         "IERC20Metadata"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1734012635667,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+      "lastModificationDate": 1734261048569,
       "contentHash": "3ae5166c6827a9cf1a7a462d1632b464",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -297,8 +296,8 @@
         "ERC20"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/contracts/TestToken.sol": {
-      "lastModificationDate": 1733939165730,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/contracts/TestToken.sol": {
+      "lastModificationDate": 1734096997482,
       "contentHash": "767e1408a01039a686a68e5bc307cd12",
       "sourceName": "contracts/TestToken.sol",
       "solcConfig": {
@@ -334,8 +333,8 @@
         "TestToken"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/contracts/MockERC20.sol": {
-      "lastModificationDate": 1733929072643,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/contracts/MockERC20.sol": {
+      "lastModificationDate": 1734096997482,
       "contentHash": "5589874133cbce787bb2dc33c4aba4ea",
       "sourceName": "contracts/MockERC20.sol",
       "solcConfig": {
@@ -371,8 +370,8 @@
         "MockERC20"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/contracts/IZKPVerifier.sol": {
-      "lastModificationDate": 1733938891269,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/contracts/IZKPVerifier.sol": {
+      "lastModificationDate": 1734096997482,
       "contentHash": "ac1b86035be98bf61c4ff2d673ebb764",
       "sourceName": "contracts/IZKPVerifier.sol",
       "solcConfig": {
@@ -406,8 +405,8 @@
         "IZKPVerifier"
       ]
     },
-    "/Users/dimitrov/Desktop/hackathon/contracts/TestVerifier.sol": {
-      "lastModificationDate": 1733939698522,
+    "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/contracts/TestVerifier.sol": {
+      "lastModificationDate": 1734266421289,
       "contentHash": "2ad09fdcc9a1181e7f79bed568ea8f48",
       "sourceName": "contracts/TestVerifier.sol",
       "solcConfig": {
@@ -441,41 +440,6 @@
       ],
       "artifacts": [
         "TestVerifier"
-      ]
-    },
-    "/Users/dimitrov/Desktop/hackathon/contracts/IVerifier.sol": {
-      "lastModificationDate": 1734078131780,
-      "contentHash": "60decc425e985b9b872d02fdc57d02da",
-      "sourceName": "contracts/IVerifier.sol",
-      "solcConfig": {
-        "version": "0.8.19",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IVerifier"
       ]
     }
   }
