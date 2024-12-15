@@ -59,34 +59,30 @@ contract BridgeWithZKP is ReentrancyGuard, Ownable {
         require(!nullifierHashes[nullifierHash], "Nullifier already used");
         require(address(this).balance >= amount, "Insufficient liquidity");
 
-        // Verify the ZKP proof
-        require(verifyProof(proof, nullifierHash), "Invalid proof");
+        // Decode the proof to verify the claimer's identity
+        (uint256 proofAmount, address proofAddress, bytes32 secret) = 
+            abi.decode(proof, (uint256, address, bytes32));
 
-        // Mark nullifier as used
+        // Verify amount matches
+        require(proofAmount == amount, "Amount mismatch");
+        
+        // Verify recipient matches the address in the proof
+        require(recipient == proofAddress, "Unauthorized withdrawal");
+
+        // Verify the nullifier matches what we expect
+        bytes32 expectedNullifier = keccak256(
+            abi.encode(secret, proofAddress)
+        );
+        require(nullifierHash == expectedNullifier, "Invalid nullifier");
+
+        // Mark nullifier as used to prevent double-spending
         nullifierHashes[nullifierHash] = true;
 
-        // Transfer native tokens to recipient
+        // Transfer tokens to recipient
         (bool success, ) = recipient.call{value: amount}("");
         require(success, "Transfer failed");
 
         emit WithdrawalExecuted(recipient, amount, nullifierHash);
-    }
-
-    // Function to verify ZKP proof
-    function verifyProof(
-        bytes calldata proof,
-        bytes32 nullifierHash
-    ) internal view returns (bool) {
-        // Call the verifier contract
-        (bool success, bytes memory result) = verifier.staticcall(
-            abi.encodeWithSignature(
-                "verifyProof(bytes,bytes32)",
-                proof,
-                nullifierHash
-            )
-        );
-        require(success, "Verifier call failed");
-        return abi.decode(result, (bool));
     }
 
     // Function to get contract balance

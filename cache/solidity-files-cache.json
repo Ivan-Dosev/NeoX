@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/dimitrov/Desktop/NeoX/untitled folder/NeoX/contracts/BridgeWithZKP.sol": {
-      "lastModificationDate": 1734269471651,
-      "contentHash": "7ed867e6171071b1d98d4bd6406d21f1",
+      "lastModificationDate": 1734275129811,
+      "contentHash": "e8e69094fbfb0b46eb7b80e5b1181376",
       "sourceName": "contracts/BridgeWithZKP.sol",
       "solcConfig": {
         "version": "0.8.19",
