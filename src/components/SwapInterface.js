@@ -7,6 +7,7 @@ import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
 import { generateZKProof } from '../utils/zkp';
 import bridgeABIJson from '../abis/BridgeWithZKP.json';
+import SupraOracleABI from '../abis/SupraOracleABI.json';
 
 const SwapContainer = styled.div`
   background-color: rgba(255, 255, 255, 0.05);
@@ -215,7 +216,7 @@ const FeeLabel = styled.span`
   text-shadow: 0 0 8px rgba(0, 242, 254, 0.2);
 
   &::before {
-    content: '💰';
+    content: '⛽';
     font-size: 18px;
   }
 `;
@@ -397,6 +398,8 @@ const ComingSoonBox = styled.div`
   }
 `;
 
+const SUPRA_ORACLE_ADDRESS = '0x938526421BB64E63b34f814Ae82BBE018e9A110B';
+
 const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -414,15 +417,70 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
   };
 
   useEffect(() => {
-    // Update toAmount to be fromAmount minus the fee
-    if (!fromAmount || isNaN(fromAmount)) {
-      setToAmount('');
-    } else {
-      const amount = parseFloat(fromAmount);
-      const fee = amount * 0.01;
-      setToAmount((amount - fee).toString());
-    }
-  }, [fromAmount]);
+    const calculateOutputAmount = async () => {
+      if (!fromAmount || isNaN(fromAmount) || !selectedTokens.from || !selectedTokens.to) {
+        setToAmount('');
+        return;
+      }
+
+      try {
+        const amount = parseFloat(fromAmount);
+        const fee = amount * 0.01; // 1% fee
+
+        // Only do price conversion if NeoX Mainnet is involved
+        if (selectedTokens.to === 'GAS') { // When bridging TO NeoX
+          // Create provider for NeoX chain
+          const provider = new ethers.providers.JsonRpcProvider("https://mainnet-1.rpc.banelabs.org");
+          
+          // Create contract instance
+          const supraOracle = new ethers.Contract(
+            SUPRA_ORACLE_ADDRESS,
+            SupraOracleABI.abi,
+            provider
+          );
+
+          // Get price from Supra Oracle
+          const priceData = await supraOracle.getPrice(260);
+          const price = ethers.utils.formatUnits(priceData.price, 18);
+          
+          // Calculate output amount: (input - fee) * price
+          const outputAmount = (amount - fee) * parseFloat(price);
+          setToAmount(outputAmount.toFixed(2));
+        } 
+        else if (selectedTokens.from === 'GAS') { // When bridging FROM NeoX
+          // Create provider for NeoX chain
+          const provider = new ethers.providers.JsonRpcProvider("https://mainnet-1.rpc.banelabs.org");
+          
+          // Create contract instance
+          const supraOracle = new ethers.Contract(
+            SUPRA_ORACLE_ADDRESS,
+            SupraOracleABI.abi,
+            provider
+          );
+
+          // Get price from Supra Oracle
+          const priceData = await supraOracle.getPrice(260);
+          const price = ethers.utils.formatUnits(priceData.price, 18);
+          
+          // Calculate output amount: (input - fee) / price
+          const outputAmount = (amount - fee) / parseFloat(price);
+          setToAmount(outputAmount.toFixed(2));
+        }
+        else { // For Sepolia <-> Base Sepolia bridges
+          // Use 1:1 conversion
+          setToAmount((amount - fee).toString());
+        }
+      } catch (error) {
+        console.error("Error calculating output amount:", error);
+        // Fallback to 1:1 conversion
+        const amount = parseFloat(fromAmount);
+        const fee = amount * 0.01;
+        setToAmount((amount - fee).toString());
+      }
+    };
+
+    calculateOutputAmount();
+  }, [fromAmount, selectedTokens.from, selectedTokens.to]); // Added dependencies
 
   const handleFromAmountChange = (value) => {
     setFromAmount(value);
@@ -514,220 +572,93 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
       setLoading(true);
       setError('');
       setStatus('Initializing swap...');
-      console.log("Starting swap process...");
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-      console.log("Connected wallet:", address);
 
-      // Generate proof
+      // Calculate the actual amount to transfer including price conversion
+      let transferAmount = ethers.utils.parseEther(fromAmount);
+      let targetAmount = ethers.utils.parseEther(toAmount); // Use the calculated toAmount which includes price conversion
+
+      // Generate proof with the correct amounts
       setStatus('Generating proof...');
-      console.log("Generating ZKP...");
       const { commitment, nullifierHash, proof } = await generateZKProof(
-        ethers.utils.parseEther(fromAmount),
+        targetAmount, // Use targetAmount instead of transferAmount
         address
       );
-      console.log("Proof generated:", { commitment, nullifierHash });
 
       // Get token info
       const fromToken = availableTokens.find(t => t.symbol === selectedTokens.from);
       const toToken = availableTokens.find(t => t.symbol === selectedTokens.to);
-      console.log("Token info:", { fromToken, toToken });
 
-      // Switch to source network and wait for it to be ready
+      // Switch to source network
       setStatus('Switching to source network...');
       const sourceProvider = await switchNetwork(fromToken.chainId, {
         chainId: fromToken.chainId,
-        chainName: 'Sepolia',
-        nativeCurrency: {
-          name: 'ETH',
-          symbol: 'ETH',
-          decimals: 18
-        },
-        rpcUrls: ['https://sepolia.base.org'],
-        blockExplorerUrls: ['https://sepolia.etherscan.io']
+        chainName: fromToken.network,
+        nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+        rpcUrls: [fromToken.network === 'sepolia' ? 
+          'https://sepolia.infura.io/v3/your-key' : 
+          'https://mainnet-1.rpc.banelabs.org'],
+        blockExplorerUrls: [fromToken.network === 'sepolia' ? 
+          'https://sepolia.etherscan.io' : 
+          'https://xexplorer.neo.org']
       });
 
-      // Wait for network switch to complete
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Verify we're on the correct network
-      const network = await sourceProvider.getNetwork();
-      if (network.chainId !== parseInt(fromToken.chainId, 16)) {
-        throw new Error('Network switch failed');
-      }
-
-      // Create contract instance with new provider
+      // Create contract instance
       const sourceSigner = sourceProvider.getSigner();
       const sourceBridge = new ethers.Contract(
         fromToken.bridgeAddress,
         bridgeABIJson.abi,
         sourceSigner
       );
-      console.log("Using bridge contract:", {
-        address: fromToken.bridgeAddress,
-        network: fromToken.network,
-        chainId: fromToken.chainId
+
+      // Execute deposit with the input amount
+      setStatus('Depositing tokens...');
+      const depositTx = await sourceBridge.deposit(commitment, {
+        value: transferAmount,
+        gasLimit: 500000
+      });
+      await depositTx.wait();
+
+      // Wait for confirmation
+      setStatus('Deposit confirmed. Switching networks...');
+      await new Promise(resolve => setTimeout(resolve, 30000));
+
+      // Switch to target network
+      const targetProvider = await switchNetwork(toToken.chainId, {
+        chainId: toToken.chainId,
+        chainName: toToken.network,
+        nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+        rpcUrls: [toToken.network === 'sepolia' ? 
+          'https://sepolia.infura.io/v3/your-key' : 
+          'https://mainnet-1.rpc.banelabs.org'],
+        blockExplorerUrls: [toToken.network === 'sepolia' ? 
+          'https://sepolia.etherscan.io' : 
+          'https://xexplorer.neo.org']
       });
 
-      // Check if commitment already exists
-      const commitmentExists = await checkCommitmentExists(sourceBridge, commitment);
-      if (commitmentExists) {
-        throw new Error("Please try again - generating new commitment");
-      }
+      // Create target bridge instance
+      const targetSigner = targetProvider.getSigner();
+      const targetBridge = new ethers.Contract(
+        toToken.bridgeAddress,
+        bridgeABIJson.abi,
+        targetSigner
+      );
 
-      // Execute deposit
-      setStatus('Waiting for deposit approval...');
-      console.log("Initiating deposit with params:", {
-        commitment,
-        value: ethers.utils.parseEther(fromAmount).toString(),
-        gasLimit: 500000,
-        bridgeAddress: fromToken.bridgeAddress
-      });
+      // Execute withdrawal with the converted amount
+      setStatus('Withdrawing tokens...');
+      const withdrawTx = await targetBridge.withdraw(
+        targetAmount, // Use targetAmount for the withdrawal
+        address,
+        nullifierHash,
+        proof,
+        { gasLimit: 500000 }
+      );
+      await withdrawTx.wait();
 
-      try {
-        // Log contract state before deposit
-        console.log("Pre-deposit checks:", {
-          contractAddress: fromToken.bridgeAddress,
-          commitment: commitment,
-          amount: ethers.utils.parseEther(fromAmount).toString(),
-          sender: address
-        });
-
-        // Check if contract exists
-        const code = await sourceProvider.getCode(fromToken.bridgeAddress);
-        console.log("Contract code exists:", code !== '0x');
-        
-        if (code === '0x') {
-          throw new Error(`No contract found at address ${fromToken.bridgeAddress}`);
-        }
-
-        // Get contract balance
-        const contractBalance = await sourceProvider.getBalance(fromToken.bridgeAddress);
-        console.log("Contract balance:", ethers.utils.formatEther(contractBalance));
-
-        // Check wallet balance
-        const walletBalance = await sourceProvider.getBalance(address);
-        console.log("Wallet balance:", ethers.utils.formatEther(walletBalance));
-
-        // Try to estimate gas first
-        let gasEstimate;
-        try {
-          console.log("Estimating gas for deposit...");
-          gasEstimate = await sourceBridge.estimateGas.deposit(commitment, {
-            value: ethers.utils.parseEther(fromAmount)
-          });
-          console.log("Gas estimate:", gasEstimate.toString());
-        } catch (gasError) {
-          console.error("Gas estimation failed:", gasError);
-          // Try with manual gas limit if estimation fails
-          gasEstimate = ethers.BigNumber.from(300000); // fallback gas limit
-        }
-
-        // Execute deposit with more gas
-        const depositTx = await sourceBridge.deposit(commitment, {
-          value: ethers.utils.parseEther(fromAmount),
-          gasLimit: gasEstimate.mul(150).div(100), // Add 50% buffer
-        });
-
-        console.log("Deposit transaction sent:", depositTx.hash);
-        setStatus('Depositing...');
-
-        const receipt = await depositTx.wait();
-        console.log("Deposit receipt:", receipt);
-
-        if (receipt.status === 0) {
-          throw new Error("Deposit transaction failed");
-        }
-
-        setStatus('Deposit confirmed. Waiting for finalization...');
-      } catch (depositError) {
-        console.error("Deposit error details:", depositError);
-        
-        // More detailed error handling
-        if (depositError.error && depositError.error.message) {
-          throw new Error(`Deposit failed: ${depositError.error.message}`);
-        } else if (depositError.message.includes('insufficient funds')) {
-          throw new Error('Insufficient funds for transaction');
-        } else if (depositError.message.includes('execution reverted')) {
-          // Try to decode the revert reason if possible
-          const reason = depositError.data ? 
-            ethers.utils.toUtf8String(depositError.data) : 
-            'Unknown reason';
-          throw new Error(`Transaction reverted: ${reason}`);
-        } else {
-          throw depositError;
-        }
-      }
-
-      // Remove the two-step withdrawal process and use direct withdrawal
-      try {
-        // Switch to target network
-        setStatus('Switching to target network...');
-        const targetProvider = await switchNetwork(toToken.chainId, {
-          chainId: toToken.chainId,
-          chainName: 'Base Sepolia',
-          nativeCurrency: {
-            name: 'ETH',
-            symbol: 'ETH',
-            decimals: 18
-          },
-          rpcUrls: ['https://sepolia.base.org'],
-          blockExplorerUrls: ['https://sepolia-explorer.base.org']
-        });
-
-        // Wait for network switch to complete
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Create target bridge contract instance
-        const targetSigner = targetProvider.getSigner();
-        const targetBridge = new ethers.Contract(
-          toToken.bridgeAddress,
-          bridgeABIJson.abi,
-          targetSigner
-        );
-
-        console.log("Target bridge setup:", {
-          address: toToken.bridgeAddress,
-          network: toToken.network,
-          chainId: toToken.chainId
-        });
-
-        // Execute withdrawal directly
-        setStatus('Executing withdrawal...');
-        console.log("Executing withdrawal with params:", {
-          amount: ethers.utils.parseEther(fromAmount).toString(),
-          recipient: address,
-          nullifierHash,
-          proofLength: proof.length
-        });
-
-        const withdrawTx = await targetBridge.withdraw(
-          ethers.utils.parseEther(fromAmount),
-          address,
-          nullifierHash,
-          proof,
-          { gasLimit: 500000 }
-        );
-
-        console.log("Withdrawal transaction sent:", withdrawTx.hash);
-        setStatus('Withdrawing...');
-        
-        const receipt = await withdrawTx.wait();
-        console.log("Withdrawal receipt:", receipt);
-
-        if (receipt.status === 0) {
-          throw new Error("Withdrawal transaction failed");
-        }
-
-        setStatus('Bridge complete!');
-
-      } catch (error) {
-        console.error('Bridge error:', error);
-        setError(error.message);
-        throw error;
-      }
+      setStatus('Bridge complete!');
     } catch (error) {
       console.error('Bridge error:', error);
       setError(error.message);

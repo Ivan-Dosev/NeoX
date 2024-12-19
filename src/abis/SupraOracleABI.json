@@ -1,0 +1,56 @@
+{
+	"abi": [
+		{
+			"inputs": [
+				{
+					"internalType": "contract ISupraSValueFeed",
+					"name": "_sValueFeed",
+					"type": "address"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_priceIndex",
+					"type": "uint256"
+				}
+			],
+			"name": "getPrice",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "round",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "decimals",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "time",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "price",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct ISupraSValueFeed.priceFeed",
+					"name": "",
+					"type": "tuple"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	]
+} 
