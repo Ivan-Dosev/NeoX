@@ -300,9 +300,9 @@ const ModalContent = styled.div`
   background: linear-gradient(135deg, #1a1b23 0%, #242731 100%);
   border: 1px solid rgba(0, 242, 254, 0.2);
   border-radius: 16px;
-  padding: 24px;
-  max-width: 400px;
-  width: 90%;
+  padding: 32px;
+  max-width: 800px;
+  width: 95%;
   position: relative;
   transform: ${props => props.show ? 'scale(1)' : 'scale(0.9)'};
   opacity: ${props => props.show ? 1 : 0};
@@ -321,8 +321,8 @@ const ModalHeader = styled.div`
 
 const ModalTitle = styled.h3`
   color: #00f2fe;
-  font-size: 24px;
-  margin: 0 0 10px 0;
+  font-size: 28px;
+  margin: 0 0 15px 0;
   font-weight: 600;
   text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
 `;
@@ -350,7 +350,8 @@ const CloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transform-origin: center;
+  transition: all 0.3s ease;
   border: 1px solid rgba(0, 242, 254, 0.2);
 
   &:hover {
@@ -362,19 +363,46 @@ const CloseButton = styled.button`
 const FeatureList = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 0 0 20px 0;
+  margin: 0 0 30px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
 `;
 
 const FeatureItem = styled.li`
   color: rgba(255, 255, 255, 0.8);
-  font-size: 15px;
-  margin-bottom: 12px;
+  font-size: 16px;
   display: flex;
   align-items: center;
+  padding: 10px;
+  background: rgba(0, 242, 254, 0.05);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 242, 254, 0.1);
+    transform: translateY(-2px);
+  }
 
   &:before {
-    content: '✨';
     margin-right: 10px;
+    font-size: 20px;
+  }
+
+  &:nth-child(1):before {
+    content: '💳'; // Token emoji for APY
+  }
+
+  &:nth-child(2):before {
+    content: '⏰'; // Clock emoji for flexible periods
+  }
+
+  &:nth-child(3):before {
+    content: '💰'; // Money bag emoji for no minimum deposit
+  }
+
+  &:nth-child(4):before {
+    content: '📈'; // Chart increasing emoji for compound earnings
   }
 `;
 
@@ -760,7 +788,7 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
             <FeatureItem>Compound your earnings automatically</FeatureItem>
           </FeatureList>
           <ComingSoonBox>
-            Coming soon
+            Coming soon 🔜
           </ComingSoonBox>
         </ModalContent>
       </Modal>
