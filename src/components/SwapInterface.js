@@ -278,6 +278,125 @@ const StakeButton = styled.button`
   }
 `;
 
+const Modal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: ${props => props.show ? 1 : 0};
+  visibility: ${props => props.show ? 'visible' : 'hidden'};
+  transition: all 0.3s ease;
+`;
+
+const ModalContent = styled.div`
+  background: linear-gradient(135deg, #1a1b23 0%, #242731 100%);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  position: relative;
+  transform: ${props => props.show ? 'scale(1)' : 'scale(0.9)'};
+  opacity: ${props => props.show ? 1 : 0};
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 24px -1px rgba(0, 0, 0, 0.3),
+    0 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 40px -10px rgba(0, 242, 254, 0.3);
+`;
+
+const ModalHeader = styled.div`
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+`;
+
+const ModalTitle = styled.h3`
+  color: #00f2fe;
+  font-size: 24px;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+`;
+
+const ModalDescription = styled.p`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+  text-align: center;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 242, 254, 0.1);
+  color: #00f2fe;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 242, 254, 0.2);
+
+  &:hover {
+    background: rgba(0, 242, 254, 0.2);
+    transform: rotate(90deg);
+  }
+`;
+
+const FeatureList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+`;
+
+const FeatureItem = styled.li`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+
+  &:before {
+    content: '✨';
+    margin-right: 10px;
+  }
+`;
+
+const ComingSoonBox = styled.div`
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.1) 0%, rgba(79, 172, 254, 0.1) 100%);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: 12px;
+  padding: 12px 24px;
+  color: #00f2fe;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 242, 254, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(0, 242, 254, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 242, 254, 0.15);
+    transform: translateY(-1px);
+  }
+`;
+
 const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -285,6 +404,7 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   // Calculate fee (1% of fromAmount)
   const calculateFee = () => {
@@ -688,10 +808,31 @@ const SwapInterface = ({ availableTokens, selectedTokens, onTokenSelect }) => {
         <PromotionText>
           Join our staking program and earn up to 12% APY on your tokens!
         </PromotionText>
-        <StakeButton onClick={() => alert('comming soon!')}>
+        <StakeButton onClick={() => setShowModal(true)}>
           Stake Now!
         </StakeButton>
       </PromotionBox>
+
+      <Modal show={showModal} onClick={() => setShowModal(false)}>
+        <ModalContent show={showModal} onClick={e => e.stopPropagation()}>
+          <CloseButton onClick={() => setShowModal(false)}>×</CloseButton>
+          <ModalHeader>
+            <ModalTitle>Staking Rewards</ModalTitle>
+            <ModalDescription>
+              Get ready to maximize your earnings with our staking program!
+            </ModalDescription>
+          </ModalHeader>
+          <FeatureList>
+            <FeatureItem>Earn up to 12% APY on your tokens</FeatureItem>
+            <FeatureItem>Flexible staking periods</FeatureItem>
+            <FeatureItem>No minimum deposit requirements</FeatureItem>
+            <FeatureItem>Compound your earnings automatically</FeatureItem>
+          </FeatureList>
+          <ComingSoonBox>
+            Coming soon
+          </ComingSoonBox>
+        </ModalContent>
+      </Modal>
     </SwapContainer>
   );
 };
