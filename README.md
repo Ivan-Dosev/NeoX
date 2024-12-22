@@ -14,6 +14,7 @@ NeoX is a decentralized application (dApp) that allows users to seamlessly swap 
 ## Technologies Used
 
 - **React**: Frontend framework for building the user interface.
+**Zero-Knowledge Proofs (ZKPs)**: A cryptographic method used to enhance privacy and security in transactions. ZKPs allow one party to prove to another that a statement is true without revealing any additional information. In NeoX, ZKPs are used to ensure that token swaps are secure and private.
 - **Ethers.js**: Library for interacting with the Ethereum blockchain.
 - **Styled Components**: For styling React components.
 - **Hardhat**: Development environment for Ethereum smart contracts.
