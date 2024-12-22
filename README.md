@@ -104,8 +104,7 @@ Contributions are welcome! Please follow these steps:
 This section describes the process of swapping tokens between different chains using our application.
 
 ## Sequence Diagram
-
-mermaid
+```mermaid
 sequenceDiagram
 participant User
 participant Wallet
@@ -130,7 +129,7 @@ SwapInterface->>TargetBridge: Withdraw tokens
 SwapInterface->>TargetBridge: withdraw(targetAmount, address, nullifierHash, proof)
 TargetBridge-->>SwapInterface: Transaction confirmed
 SwapInterface->>User: Display success message
-
+```
 
 ## License
 
