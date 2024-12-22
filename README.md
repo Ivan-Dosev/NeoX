@@ -99,6 +99,39 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/YourFeature`).
 5. Open a pull request.
 
+# Token Swap Process
+
+This section describes the process of swapping tokens between different chains using our application.
+
+## Sequence Diagram
+
+mermaid
+sequenceDiagram
+participant User
+participant Wallet
+participant SwapInterface
+participant SupraOracle
+participant SourceBridge
+participant TargetBridge
+User->>SwapInterface: Input amount and select tokens
+SwapInterface->>SwapInterface: Calculate fee
+SwapInterface->>SwapInterface: Fetch price from SupraOracle
+SwapInterface->>SupraOracle: getPrice(260)
+SupraOracle-->>SwapInterface: Return price data
+SwapInterface->>SwapInterface: Calculate output amount
+SwapInterface->>User: Display output amount
+User->>SwapInterface: Click "Swap" button
+SwapInterface->>Wallet: Request wallet connection
+Wallet-->>SwapInterface: Wallet connected
+SwapInterface->>SourceBridge: Deposit tokens
+SwapInterface->>SourceBridge: deposit(commitment, { value: transferAmount })
+SourceBridge-->>SwapInterface: Transaction confirmed
+SwapInterface->>TargetBridge: Withdraw tokens
+SwapInterface->>TargetBridge: withdraw(targetAmount, address, nullifierHash, proof)
+TargetBridge-->>SwapInterface: Transaction confirmed
+SwapInterface->>User: Display success message
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
