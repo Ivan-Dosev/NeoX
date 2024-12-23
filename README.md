@@ -63,7 +63,7 @@ NeoX is a decentralized application (dApp) that allows users to seamlessly swap 
    npm start
    ```
 
-2. Open your browser and navigate to `http://localhost:3000`.
+2. Open your browser and navigate to `http://localhost:3000`. or `https://neox.thedrop.top`
 
 ## Usage
 
