@@ -55,6 +55,16 @@ NeoX is a decentralized application (dApp) that allows users to seamlessly swap 
    BASESCAN_API_KEY=your_basescan_api_key
    ```
 
+      ```plaintext
+   Smart Contract Addresses Bridge: 0xa8463795fAEfb6004Ce97115f335A201e133C567
+   Smart Contract Addresses SupraOracle: 0x938526421BB64E63b34f814Ae82BBE018e9A110B
+   Smart Contract Addresses Prover: 0x216D043aB1e57180157fDAD7629651CD60a38bD0
+
+   NeoX Explorer: https://xexplorer.neo.org/address/0xa8463795fAEfb6004Ce97115f335A201e133C567?tab=contract
+   NeoX Explorer: https://xexplorer.neo.org/address/0x938526421BB64E63b34f814Ae82BBE018e9A110B?tab=contract
+   NeoX Explorer: https://xexplorer.neo.org/address/0x216D043aB1e57180157fDAD7629651CD60a38bD0?tab=contract
+   ```
+
 ### Running the Application
 
 1. Start the development server:
@@ -63,7 +73,7 @@ NeoX is a decentralized application (dApp) that allows users to seamlessly swap 
    npm start
    ```
 
-2. Open your browser and navigate to `http://localhost:3000`. or `https://neox.thedrop.top`
+2. Open your browser and navigate to `http://localhost:3000` or `https://neox.thedrop.top`
 
 ## Usage
 
