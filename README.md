@@ -56,9 +56,9 @@ NeoX is a decentralized application (dApp) that allows users to seamlessly swap 
    ```
 
       ```plaintext
-   Smart Contract Addresses Bridge: 0xa8463795fAEfb6004Ce97115f335A201e133C567
-   Smart Contract Addresses SupraOracle: 0x938526421BB64E63b34f814Ae82BBE018e9A110B
-   Smart Contract Addresses Prover: 0x216D043aB1e57180157fDAD7629651CD60a38bD0
+   Smart Contract Address Bridge: 0xa8463795fAEfb6004Ce97115f335A201e133C567
+   Smart Contract Address SupraOracle: 0x938526421BB64E63b34f814Ae82BBE018e9A110B
+   Smart Contract Address Prover: 0x216D043aB1e57180157fDAD7629651CD60a38bD0
 
    NeoX Explorer: https://xexplorer.neo.org/address/0xa8463795fAEfb6004Ce97115f335A201e133C567?tab=contract
    NeoX Explorer: https://xexplorer.neo.org/address/0x938526421BB64E63b34f814Ae82BBE018e9A110B?tab=contract
