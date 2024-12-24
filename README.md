@@ -75,6 +75,10 @@ NeoX is a decentralized application (dApp) that allows users to seamlessly swap 
 
 2. Open your browser and navigate to `http://localhost:3000` or `https://neox.thedrop.top`
 
+## Important Information
+
+**When testing the bridge and swapping tokens, please make sure that the contract bridge has enough balance to cover the transaction amount, otherwise you will get an error alert and failing transaction.**
+
 ## Usage
 
 1. Connect your wallet (e.g., MetaMask).
