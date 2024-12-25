@@ -145,12 +145,14 @@ SwapInterface->>TargetBridge: withdraw(targetAmount, address, nullifierHash, pro
 TargetBridge-->>SwapInterface: Transaction confirmed
 SwapInterface->>User: Display success message
 ```
-## Roadmap
+## Roadmap 🗺️
 
 1. **Cross-Chain Integration** : Add support for additional blockchains to broaden token swapping capabilities.
 2. **Enhanced Staking Features**: Introduce new staking options and yield farming opportunities to incentivize user engagement.
 3. **Educational Initiatives** : Create tutorials and guides to help users understand how to use the platform and the benefits of using ZKPs in DeFi.
 4. **Partnerships with DeFi Projects** : Collaborate with other DeFi projects to create synergies and enhance the platform's offerings.
+
+## Business model 📈
 
 ## License
 
