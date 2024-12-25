@@ -148,11 +148,14 @@ SwapInterface->>User: Display success message
 ## Roadmap 🗺️
 
 1. **Cross-Chain Integration** : Add support for additional blockchains to broaden token swapping capabilities.
-2. **Enhanced Staking Features**: Introduce new staking options and yield farming opportunities to incentivize user engagement.
+2. **Enhanced Staking Features**: Introduce new staking options and yield farming opportunities to incentivize user engagement and liquidity provision.
 3. **Educational Initiatives** : Create tutorials and guides to help users understand how to use the platform and the benefits of using ZKPs in DeFi.
 4. **Partnerships with DeFi Projects** : Collaborate with other DeFi projects to create synergies and enhance the platform's offerings.
 
 ## Business model 📈
+
+- **Staking Rewards** : Users can provide liquidity to the bridge by staking their tokens in the bridge, thus they can earn rewards every time a transaction is made. The rewards are made from the transaction fees.
+- **Transaction Fees** : Users pay a fee for each transaction made through the bridge.
 
 ## License
 
