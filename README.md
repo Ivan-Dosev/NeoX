@@ -161,11 +161,3 @@ SwapInterface->>User: Display success message
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
-
-- Thanks to the Ethereum community for their support and resources.
-- Special thanks to the developers of Ethers.js and Hardhat for their amazing tools.
-
----
-
-Feel free to customize this template further based on your project's specific needs and features. Let me know if you need any additional sections or modifications!
