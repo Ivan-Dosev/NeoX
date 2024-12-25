@@ -79,7 +79,7 @@ NeoX is a decentralized application (dApp) that allows users to seamlessly swap 
 
 **When testing the bridge and swapping tokens, please make sure that the contract bridge has enough balance to cover the transaction amount, otherwise you will get an error alert and failing transaction.**
 
-** Currently the bridge is using the SupraOracle to get the price of tokens, however when we swap 1Eth to Gas we actually calculate the GAS-USDT price, so consider 1Eth to be 1USDT for the purpose of this hackathon.**
+**Currently the bridge is using the SupraOracle to get the price of tokens, however when we swap 1Eth to Gas we actually calculate the GAS-USDT price, so consider 1Eth to be 1USDT for the purpose of this hackathon.**
 
 ## Usage
 
