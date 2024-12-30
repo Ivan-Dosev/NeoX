@@ -79,7 +79,8 @@ NeoX is a decentralized application (dApp) that allows users to seamlessly swap 
 
 **When testing the bridge and swapping tokens, please make sure that the contract bridge has enough balance to cover the transaction amount, otherwise you will get an error alert and failing transaction.**
 
-**Currently the bridge is using the SupraOracle to get the price of tokens, however when we swap 1ETH to GAS we actually calculate the GAS-USDT price, so consider 1ETH to be 1USDT for the purpose of this hackathon. The Oracle SC used is 0x58e158c74DF7Ad6396C0dcbadc4878faC9e93d57 and Pair ID is 260.**
+**Currently the bridge is using the SupraOracle to get the price of tokens, however when we swap 1ETH to GAS we actually calculate the GAS-USDT price, so consider 1ETH to be 1USDT for the purpose of this hackathon. 
+**The Oracle SC used is 0x58e158c74DF7Ad6396C0dcbadc4878faC9e93d57 and Pair ID is 260.**
 
 ## Usage
 
@@ -106,7 +107,7 @@ npx hardhat run scripts/deploy.js --network sepolia
 npx hardhat run scripts/deploy.js --network neoxMainnet
 ```
 
-## Contributing
+## Contributing 
 
 Contributions are welcome! Please follow these steps:
 
